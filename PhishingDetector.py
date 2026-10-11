@@ -10,6 +10,7 @@ def main():
     ttk.Label(frm, text="This is Awesome!").grid(column=0, row=1)
     ttk.Label(frm, text="CTRL-ALT-ELITE EDITION").grid(column=0, row=2)
     ttk.Button(frm, text="Quit", command=root.destroy).grid(column=0, row=3)
+    ttk.Button(frm, text="Quit Again", command=root.destroy).grid(column=1, row=3)
     root.mainloop()
     
 if __name__ == "__main__":
