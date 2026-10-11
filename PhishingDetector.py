@@ -4,6 +4,7 @@ from tkinter import ttk
 
 def main():
     root = Tk()
+    root.title("VWCC CAE Phishing Analyzer v1.0")
     frm = ttk.Frame(root, padding=10)
     frm.grid()
     ttk.Label(frm, text="Welcome to the Phishing Detector!").grid(column=0, row=0, pady=(0, 10), padx=20)
