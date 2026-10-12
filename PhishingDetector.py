@@ -31,12 +31,27 @@ def main():
     # Print the current value whenever the user presses Return.
     def print_contents(event):
         print("The current URL is:", url.get())
-    entry.bind("<Return>", print_contents)
+    # Using lambda allows entry.bind to call multiple functions, I believe (it works correctly).
+    entry.bind("<Return>", lambda event: (print_contents(event), phising_detector(url.get())))
     quitButton = ttk.Button(frm, text="Quit", command=root.destroy)
     quitButton.grid(column=1, row=100, sticky="e")
-    
+
+    # Placeholder for the actual phishing detection logic.
+    def phising_detector(url):
+        is_phishing = False  # Replace with actual detection logic
+        phising_confidence = 100  # Replace with actual confidence score
+        phising_announcer(is_phishing, phising_confidence)
+
+    # Will show the user the results of the phishing detection.
+    def phising_announcer(is_phishing, phising_confidence):
+        if is_phishing:
+            print("This URL is likely phishing with confidence:", str(phising_confidence) + "%")
+        else:
+            print("This URL is likely safe with confidence:", str(phising_confidence) + "%")
 
     
+
+
     root.mainloop()
 
 if __name__ == "__main__":
