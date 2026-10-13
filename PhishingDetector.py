@@ -31,7 +31,8 @@ def main():
     def back_to_frm():
         frm2.grid_forget()  # Hide the second frame
         frm.grid()  # Show the first frame
-   
+        url.set("") # Clear the URL entry field for the next input
+        root.bind("<Return>", lambda event: phishing_detector(url.get()))
 
     
     firstLine = ttk.Label(frm, text="Welcome to the Phishing Detector!")
@@ -52,7 +53,7 @@ def main():
     
     
     # Using lambda allows entry.bind to call multiple functions, I believe (it works correctly).
-    entry.bind("<Return>", lambda event: phishing_detector(url.get()))
+    root.bind("<Return>", lambda event: phishing_detector(url.get()))
     quitButton = ttk.Button(frm, text="Quit", command=root.destroy)
     quitButton.grid(column=0, row=100, sticky="w")
     scanButton = ttk.Button(frm, text="Scan URL", command=lambda: phishing_detector(url.get()))
@@ -68,12 +69,10 @@ def main():
 
     # Placeholder for the actual phishing detection logic.
     def phishing_detector(url):
-        #if the url is empty or the default placeholder text, show a warning message and return
+        # If the url is empty or the default placeholder text, show a warning message and return
         if url == "" or url == "Enter URL here":
             statusLabel.config(text="Please enter a URL to scan.", foreground="orange")
-            statusLabel.grid(column=0, row=0, columnspan=2, pady=5)
             resultLabel.config(text="")
-            resultLabel.grid(column=0, row=1, columnspan=2, pady=10)
             return
         is_phishing = False  # Replace with actual detection logic
         phishing_confidence = 100  # Replace with actual confidence score
@@ -101,16 +100,17 @@ def main():
     def phishing_announcer(is_phishing, phishing_confidence):
         frm.grid_forget()  # Hide the first frame
         frm2.grid()  # Show the second frame
+        root.bind("<Return>", lambda event: back_to_frm())
         
         if is_phishing:
             statusLabel.config(text="WARNING!!", foreground="dark red")
-            statusLabel.grid(column=0, row=0, columnspan=2, pady=5)
+            #statusLabel.grid(column=0, row=0, columnspan=2, pady=5)
             resultLabel.config(text=f"{url.get()} is likely phishing with confidence: {phishing_confidence}%") #format string to show the confidence score
             #print("This URL is likely phishing with confidence:", str(phishing_confidence) + "%")
-            resultLabel.grid(column=0, row=1, columnspan=2, pady=10)        
+            #resultLabel.grid(column=0, row=1, columnspan=2, pady=10)        
         else:
             statusLabel.config(text="SAFE", foreground="dark green")
-            statusLabel.grid(column=0, row=0, columnspan=2, pady=5)            
+            #statusLabel.grid(column=0, row=0, columnspan=2, pady=5)
             resultLabel.config(text=f"{url.get()} is likely safe with confidence: {phishing_confidence}%") #format string to show the confidence score
             #print("This URL is likely safe with confidence:", str(phishing_confidence) + "%")
             resultLabel.grid(column=0, row=1, columnspan=2, pady=10)
