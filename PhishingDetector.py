@@ -75,26 +75,89 @@ def main():
             resultLabel.config(text="")
             return
         is_phishing = False  # Replace with actual detection logic
-        phishing_confidence = 100  # Replace with actual confidence score
-
+        phishing_confidence = 0  # Replace with actual confidence score
+        urlLength, specialCharactersCount, digitsCount, lettersCount = typesOfCharactersInUrl(url)
         if ".xyz" in url or ".click" in url or ".biz" in url or ".scam" in url:
-            is_phishing = True
             phishing_confidence = 90  # 90% likely a scam based on keywords
         elif "login" in url or "secure" in url or "update" in url or "verify" in url:
-            is_phishing = True
             phishing_confidence = 85  # 85% likely a scam based on keywords
         elif "free" in url or "offer" in url or "click" in url:
-            is_phishing = True
             phishing_confidence = 75  # 75% likely a scam based on keywords
         elif "bank" in url or "paypal" in url or "amazon" in url:
-            is_phishing = True
             phishing_confidence = 65  # 65% likely a scam based on keywords
         else:
-            is_phishing = False
-            phishing_confidence = 99  # 99% likely safe based on keywords
+            phishing_confidence = 1  # 99% likely safe based on keywords
 
+        # Adds onto phishing confidence the lower the percentage of letters is in the URL
+        lettersPercent = lettersCount / urlLength
+        if (lettersPercent < 0.8):
+            phishing_confidence += 10
+        elif (lettersPercent < 0.7):
+            phishing_confidence += 20
+        elif (lettersPercent < 0.5):
+            phishing_confidence += 50
+        elif (lettersPercent < 0.3):
+            phishing_confidence += 99
+
+        # Adds onto phishing confidence the higher the percentage of special characters is in the URL
+        specialCharactersPercent = specialCharactersCount / urlLength
+        if (specialCharactersPercent > .15):
+            phishing_confidence += 10
+        elif (specialCharactersPercent > .20):
+            phishing_confidence += 20
+        elif (specialCharactersPercent > .30):
+            phishing_confidence +=50
+        elif (specialCharactersPercent > .50):
+            phishing_confidence += 99
+
+        # Adds onto phishing confidence the higher the percentage of numbers is in the URL
+        numbersPercent = digitsCount / urlLength
+        if (numbersPercent > .5):
+            phishing_confidence += 10
+        elif (numbersPercent > .10):
+            phishing_confidence += 20
+        elif (numbersPercent > .15):
+            phishing_confidence +=50
+        elif (numbersPercent > .30):
+            phishing_confidence += 99
+
+
+        # If the confidence is over 99 sets it to 99
+        if (phishing_confidence > 99):
+            phishing_confidence = 99
+
+        # If the confidence is over 50 label it as phishing
+        if (phishing_confidence > 50):
+            is_phishing = True
+        else:
+            is_phishing = False
         phishing_announcer(is_phishing, phishing_confidence)
 
+    # Checks the length of and how many digits, special characters and letters there are in the URL
+    def typesOfCharactersInUrl(url):
+        specialCharactersCount = 0
+        digitsCount = 0
+        # Removes https:// or http:// from the string before checking special characters
+        if "https://" in url or "http://" in url:
+            url = url.split("//", 1)[1]
+
+        # Gets lenght of URL
+        urlLength = len(url)
+
+        # Checks if each character is a special character or digit
+        for characters in url:
+            if (not characters.isalnum()):
+                specialCharactersCount += 1
+            if (characters.isdigit()):
+                digitsCount += 1
+
+        lettersCount = urlLength - (digitsCount + specialCharactersCount)
+
+        return (urlLength,specialCharactersCount,digitsCount,lettersCount) 
+
+
+
+            
 
     # Will show the user the results of the phishing detection.
     def phishing_announcer(is_phishing, phishing_confidence):
@@ -111,7 +174,7 @@ def main():
         else:
             statusLabel.config(text="SAFE", foreground="dark green")
             #statusLabel.grid(column=0, row=0, columnspan=2, pady=5)
-            resultLabel.config(text=f"{url.get()} is likely safe with confidence: {phishing_confidence}%") #format string to show the confidence score
+            resultLabel.config(text=f"{url.get()} is likely safe with confidence: {100 - phishing_confidence}%") #format string to show the confidence score
             #print("This URL is likely safe with confidence:", str(phishing_confidence) + "%")
             resultLabel.grid(column=0, row=1, columnspan=2, pady=10)
 
