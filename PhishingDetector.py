@@ -168,13 +168,13 @@ def main():
         if is_phishing:
             statusLabel.config(text="WARNING!!", foreground="dark red")
             #statusLabel.grid(column=0, row=0, columnspan=2, pady=5)
-            resultLabel.config(text=f"{url.get()} is likely phishing with confidence: {phishing_confidence}%") #format string to show the confidence score
+            resultLabel.config(text=f"{url.get()[:50]} is likely phishing with confidence: {phishing_confidence}%") #format string to show the confidence score
             #print("This URL is likely phishing with confidence:", str(phishing_confidence) + "%")
             #resultLabel.grid(column=0, row=1, columnspan=2, pady=10)        
         else:
             statusLabel.config(text="SAFE", foreground="dark green")
             #statusLabel.grid(column=0, row=0, columnspan=2, pady=5)
-            resultLabel.config(text=f"{url.get()} is likely safe with confidence: {100 - phishing_confidence}%") #format string to show the confidence score
+            resultLabel.config(text=f"{url.get()[:50]} is likely safe with confidence: {100 - phishing_confidence}%") #format string to show the confidence score
             #print("This URL is likely safe with confidence:", str(phishing_confidence) + "%")
             resultLabel.grid(column=0, row=1, columnspan=2, pady=10)
 
