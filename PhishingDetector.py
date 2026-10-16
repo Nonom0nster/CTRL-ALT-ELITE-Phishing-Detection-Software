@@ -88,16 +88,16 @@ def main():
         
         urlLength, specialCharactersCount, digitsCount, lettersCount, is_dangerous = typesOfCharactersInUrl(url)
         if ".xyz" in url or ".click" in url or ".biz" in url or ".scam" in url:
-            phishing_confidence = 90  # 90% likely a scam based on keywords
+            phishing_confidence += 90  # 90% likely a scam based on keywords
             keywordsInformer = 1
         if "login" in url or "secure" in url or "update" in url or "verify" in url:
-            phishing_confidence += 85  # 85% likely a scam based on keywords
+            phishing_confidence += 25  # 25% likely a scam based on keywords
             keywordsInformer = 2
         if "free" in url or "offer" in url or "click" in url:
-            phishing_confidence += 75  # 75% likely a scam based on keywords
+            phishing_confidence += 35  # 35% likely a scam based on keywords
             keywordsInformer = 3
         if "bank" in url or "paypal" in url or "amazon" in url:
-            phishing_confidence += 65  # 65% likely a scam based on keywords
+            phishing_confidence += 20  # 20% likely a scam based on keywords
             keywordsInformer = 4
         else:
             phishing_confidence = 1  # 99% likely safe based on keywords
@@ -105,13 +105,13 @@ def main():
         # Adds onto phishing confidence the lower the percentage of letters is in the URL
         lettersPercent = lettersCount / urlLength
         if (lettersPercent < 0.3):
-            phishing_confidence += 10
-        elif (lettersPercent < 0.5):
-            phishing_confidence += 20
-        elif (lettersPercent < 0.7):
             phishing_confidence += 50
+        elif (lettersPercent < 0.5):
+            phishing_confidence += 30
+        elif (lettersPercent < 0.7):
+            phishing_confidence += 10
         elif (lettersPercent < 0.8):
-            phishing_confidence += 99
+            phishing_confidence += 5
 
         if (lettersPercent < 0.8):
             lettersInformer = lettersPercent
@@ -119,13 +119,13 @@ def main():
         # Adds onto phishing confidence the higher the percentage of special characters is in the URL
         specialCharactersPercent = specialCharactersCount / urlLength
         if (specialCharactersPercent > .50):
-            phishing_confidence += 10
-        elif (specialCharactersPercent > .30):
-            phishing_confidence += 20
-        elif (specialCharactersPercent > .20):
-            phishing_confidence +=50
-        elif (specialCharactersPercent > .15):
             phishing_confidence += 99
+        elif (specialCharactersPercent > .30):
+            phishing_confidence += 50
+        elif (specialCharactersPercent > .20):
+            phishing_confidence += 10
+        elif (specialCharactersPercent > .15):
+            phishing_confidence += 5
 
         if (specialCharactersPercent > .15):
             specialCharactersInformer = specialCharactersPercent
@@ -133,13 +133,13 @@ def main():
         # Adds onto phishing confidence the higher the percentage of numbers is in the URL
         numbersPercent = digitsCount / urlLength
         if (numbersPercent > .30):
-            phishing_confidence += 10
+            phishing_confidence += 99
         elif (numbersPercent > .15):
             phishing_confidence += 20
         elif (numbersPercent > .10):
-            phishing_confidence +=50
+            phishing_confidence += 10
         elif (numbersPercent > .05):
-            phishing_confidence += 99
+            phishing_confidence += 5
 
         if (numbersPercent > .05):
             numbersInformer = numbersPercent
@@ -224,11 +224,11 @@ def main():
             securityLabel.config(font=(14),padding=(20,20))
 
         if lettersInformer < 0.8:
-            reasoning += f"WARNING!! This URL contains {lettersInformer*100:.2f}% letters! Be careful!\n"
+            reasoning += f"WARNING!! {lettersInformer*100:.2f}% of this URL is made up of letters! Use caution!\n"
         if specialCharactersInformer > 0.15:
-            reasoning += f"WARNING!! This URL contains {specialCharactersInformer*100:.2f}% special characters! Be careful!\n"
+            reasoning += f"WARNING!! {specialCharactersInformer*100:.2f}% of this URL is made up of special characters! Use caution!\n"
         if numbersInformer > 0.05:
-            reasoning += f"WARNING!! This URL contains {numbersInformer*100:.2f}% numbers! Be careful!\n"
+            reasoning += f"WARNING!! {numbersInformer*100:.2f}% of this URL is made up of numbers! Use caution!\n"
         if keywordsInformer == 1:
             reasoning += "WARNING!! This URL contains keywords that are commonly used in phishing attacks, which includes: .xyz, .click, .biz, .scam \n"
         if keywordsInformer == 2:
