@@ -28,9 +28,11 @@ def main():
     resultLabel = ttk.Label(frm2, text="")
     resultLabel.grid(column=0, row=1, columnspan=2, pady=10) 
     securityLabel = ttk.Label(frm2, text="")
-    securityLabel.grid(column=0, row=2, columnspan=2, pady=10)
+    securityLabel.grid(column=0, row=2, columnspan=2, pady=5)
     reasoningLabel = ttk.Label(frm2, text="")
-    reasoningLabel.grid(column=0, row=3, columnspan=2, pady=10)
+    reasoningLabel.grid(column=0, row=4, columnspan=2, pady=5)
+    # suspicionLabel = ttk.Label(frm2, text="")
+    # suspicionLabel.grid(column=0, row=3, columnspan=2, pady=5)
 
     def back_to_frm():
         frm2.grid_forget()  # Hide the second frame
@@ -238,7 +240,10 @@ def main():
         if keywordsInformer == 4:
             reasoning += "WARNING!! This URL contains keywords that are commonly used in phishing attacks, which includes: bank, paypal, amazon \n"
 
-        reasoningLabel.config(text=reasoning, foreground="orange")
+        # if reasoning != "":
+        #     suspicionLabel.config(text="These are the reasons for suspicion:", foreground="dark orange", font=(14))
+
+        reasoningLabel.config(text=reasoning, foreground="dark orange")
         reasoningLabel.config(font=(14),padding=(20,20))
 
     root.mainloop()
