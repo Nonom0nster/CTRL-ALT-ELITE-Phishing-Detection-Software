@@ -1,12 +1,9 @@
-##################################################
-#
-#
-#
-# HEADER AND COMMENT BLOCK maybe with credits and sources too?
-#
-#
-#
-##################################################
+########################################################
+# HACKATHON 2026 - Virginia Western Community College
+# CTRL-ALT-ELITE Edition
+# VWCC CAE Phishing Detector v1.0
+# (c) Noah W, Noah T, Arkadiy, Lashman, 16 October 2026
+########################################################
 
 from tkinter import *
 from tkinter import ttk
@@ -35,6 +32,7 @@ def main():
     # suspicionLabel.grid(column=0, row=3, columnspan=2, pady=5)
 
     def back_to_frm():
+        #back to normal window size
         statusLabel.config(text="")
         resultLabel.config(text="")
         securityLabel.config(text="")
@@ -181,8 +179,6 @@ def main():
         if "https://" in url or "http://" in url:
             url = url.split("//", 1)[1]
 
-
-
         
         # Gets lenght of URL
         urlLength = len(url)
@@ -198,8 +194,6 @@ def main():
 
 
         return (urlLength,specialCharactersCount,digitsCount,lettersCount, is_dangerous)
-
-
 
             
 
