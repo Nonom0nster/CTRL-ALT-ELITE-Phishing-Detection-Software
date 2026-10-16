@@ -26,7 +26,11 @@ def main():
     statusLabel = ttk.Label(frm2, text="")
     statusLabel.grid(column=0, row=0, columnspan=2, pady=5)
     resultLabel = ttk.Label(frm2, text="")
-    resultLabel.grid(column=0, row=1, columnspan=2, pady=10)  
+    resultLabel.grid(column=0, row=1, columnspan=2, pady=10) 
+    securityLabel = ttk.Label(frm2, text="")
+    securityLabel.grid(column=0, row=2, columnspan=2, pady=10)
+    reasoningLabel = ttk.Label(frm2, text="")
+    reasoningLabel.grid(column=0, row=3, columnspan=2, pady=10)
 
     def back_to_frm():
         frm2.grid_forget()  # Hide the second frame
@@ -76,50 +80,69 @@ def main():
             return
         is_phishing = False  # Replace with actual detection logic
         phishing_confidence = 0  # Replace with actual confidence score
-        urlLength, specialCharactersCount, digitsCount, lettersCount = typesOfCharactersInUrl(url)
+        # important for the information section
+        specialCharactersInformer = 0
+        numbersInformer = 0  
+        lettersInformer = 1
+        keywordsInformer = 0
+        
+        urlLength, specialCharactersCount, digitsCount, lettersCount, is_dangerous = typesOfCharactersInUrl(url)
         if ".xyz" in url or ".click" in url or ".biz" in url or ".scam" in url:
             phishing_confidence = 90  # 90% likely a scam based on keywords
-        elif "login" in url or "secure" in url or "update" in url or "verify" in url:
-            phishing_confidence = 85  # 85% likely a scam based on keywords
-        elif "free" in url or "offer" in url or "click" in url:
-            phishing_confidence = 75  # 75% likely a scam based on keywords
-        elif "bank" in url or "paypal" in url or "amazon" in url:
-            phishing_confidence = 65  # 65% likely a scam based on keywords
+            keywordsInformer = 1
+        if "login" in url or "secure" in url or "update" in url or "verify" in url:
+            phishing_confidence += 85  # 85% likely a scam based on keywords
+            keywordsInformer = 2
+        if "free" in url or "offer" in url or "click" in url:
+            phishing_confidence += 75  # 75% likely a scam based on keywords
+            keywordsInformer = 3
+        if "bank" in url or "paypal" in url or "amazon" in url:
+            phishing_confidence += 65  # 65% likely a scam based on keywords
+            keywordsInformer = 4
         else:
             phishing_confidence = 1  # 99% likely safe based on keywords
 
         # Adds onto phishing confidence the lower the percentage of letters is in the URL
         lettersPercent = lettersCount / urlLength
-        if (lettersPercent < 0.8):
+        if (lettersPercent < 0.3):
             phishing_confidence += 10
-        elif (lettersPercent < 0.7):
-            phishing_confidence += 20
         elif (lettersPercent < 0.5):
+            phishing_confidence += 20
+        elif (lettersPercent < 0.7):
             phishing_confidence += 50
-        elif (lettersPercent < 0.3):
+        elif (lettersPercent < 0.8):
             phishing_confidence += 99
+
+        if (lettersPercent < 0.8):
+            lettersInformer = lettersPercent
 
         # Adds onto phishing confidence the higher the percentage of special characters is in the URL
         specialCharactersPercent = specialCharactersCount / urlLength
-        if (specialCharactersPercent > .15):
+        if (specialCharactersPercent > .50):
             phishing_confidence += 10
-        elif (specialCharactersPercent > .20):
-            phishing_confidence += 20
         elif (specialCharactersPercent > .30):
+            phishing_confidence += 20
+        elif (specialCharactersPercent > .20):
             phishing_confidence +=50
-        elif (specialCharactersPercent > .50):
+        elif (specialCharactersPercent > .15):
             phishing_confidence += 99
+
+        if (specialCharactersPercent > .15):
+            specialCharactersInformer = specialCharactersPercent
 
         # Adds onto phishing confidence the higher the percentage of numbers is in the URL
         numbersPercent = digitsCount / urlLength
-        if (numbersPercent > .5):
+        if (numbersPercent > .30):
             phishing_confidence += 10
-        elif (numbersPercent > .10):
-            phishing_confidence += 20
         elif (numbersPercent > .15):
+            phishing_confidence += 20
+        elif (numbersPercent > .10):
             phishing_confidence +=50
-        elif (numbersPercent > .30):
+        elif (numbersPercent > .05):
             phishing_confidence += 99
+
+        if (numbersPercent > .05):
+            numbersInformer = numbersPercent
 
 
         # If the confidence is over 99 sets it to 99
@@ -131,16 +154,27 @@ def main():
             is_phishing = True
         else:
             is_phishing = False
-        phishing_announcer(is_phishing, phishing_confidence)
+
+        phishing_announcer(is_phishing, phishing_confidence, is_dangerous, lettersInformer, specialCharactersInformer, numbersInformer, keywordsInformer)
 
     # Checks the length of and how many digits, special characters and letters there are in the URL
     def typesOfCharactersInUrl(url):
         specialCharactersCount = 0
         digitsCount = 0
+        is_dangerous = False
+
+        # If the url starts with http:// it should be flagged as not secure
+        if "http://" in url:
+            is_dangerous = True
+
+
         # Removes https:// or http:// from the string before checking special characters
         if "https://" in url or "http://" in url:
             url = url.split("//", 1)[1]
 
+
+
+        
         # Gets lenght of URL
         urlLength = len(url)
 
@@ -153,17 +187,19 @@ def main():
 
         lettersCount = urlLength - (digitsCount + specialCharactersCount)
 
-        return (urlLength,specialCharactersCount,digitsCount,lettersCount) 
+
+        return (urlLength,specialCharactersCount,digitsCount,lettersCount, is_dangerous)
 
 
 
             
 
     # Will show the user the results of the phishing detection.
-    def phishing_announcer(is_phishing, phishing_confidence):
+    def phishing_announcer(is_phishing, phishing_confidence, is_dangerous, lettersInformer, specialCharactersInformer, numbersInformer, keywordsInformer):
         frm.grid_forget()  # Hide the first frame
         frm2.grid()  # Show the second frame
         root.bind("<Return>", lambda event: back_to_frm())
+        reasoning = ""
         
         if is_phishing:
             statusLabel.config(text="WARNING!!", foreground="dark red")
@@ -178,9 +214,26 @@ def main():
             #print("This URL is likely safe with confidence:", str(phishing_confidence) + "%")
             resultLabel.grid(column=0, row=1, columnspan=2, pady=10)
 
+        
+        if is_dangerous:
+            securityLabel.config(text="WARNING!! This URL is not secure it contains http://! Be careful!", foreground="orange")
 
-    
+        if lettersInformer < 0.8:
+            reasoning += f"WARNING!! This URL contains {lettersInformer*100:.2f}% letters! Be careful!\n"
+        if specialCharactersInformer > 0.15:
+            reasoning += f"WARNING!! This URL contains {specialCharactersInformer*100:.2f}% special characters! Be careful!\n"
+        if numbersInformer > 0.05:
+            reasoning += f"WARNING!! This URL contains {numbersInformer*100:.2f}% numbers! Be careful!\n"
+        if keywordsInformer == 1:
+            reasoning += "WARNING!! This URL contains keywords that are commonly used in phishing attacks, which includes: .xyz, .click, .biz, .scam \n"
+        if keywordsInformer == 2:
+            reasoning += "WARNING!! This URL contains keywords that are commonly used in phishing attacks, which includes: login, secure, update, verify \n"
+        if keywordsInformer == 3:
+            reasoning += "WARNING!! This URL contains keywords that are commonly used in phishing attacks, which includes: free, offer, click \n"
+        if keywordsInformer == 4:
+            reasoning += "WARNING!! This URL contains keywords that are commonly used in phishing attacks, which includes: bank, paypal, amazon \n"
 
+        statusLabel.config(text=reasoning, foreground="orange")
 
     root.mainloop()
 
