@@ -92,7 +92,7 @@ def main():
         if ".xyz" in url or ".click" in url or ".biz" in url or ".scam" in url:
             phishing_confidence += 90  # 90% likely a scam based on keywords
             keywordsInformer = 1
-        if "login" in url or "secure" in url or "update" in url or "verify" in url:
+        if "secure" in url or "update" in url or "verify" in url:
             phishing_confidence += 25  # 25% likely a scam based on keywords
             keywordsInformer = 2
         if "free" in url or "offer" in url or "click" in url:
@@ -101,6 +101,9 @@ def main():
         if "bank" in url or "paypal" in url or "amazon" in url:
             phishing_confidence += 20  # 20% likely a scam based on keywords
             keywordsInformer = 4
+        if "login" in url:
+            phishing_confidence += 15  # 15% likely a scam based on keywords
+            keywordsInformer = 5
         else:
             phishing_confidence = 1  # 99% likely safe based on keywords
 
@@ -109,11 +112,11 @@ def main():
         if (lettersPercent < 0.3):
             phishing_confidence += 50
         elif (lettersPercent < 0.5):
-            phishing_confidence += 30
+            phishing_confidence += 35
         elif (lettersPercent < 0.7):
-            phishing_confidence += 10
+            phishing_confidence += 15
         elif (lettersPercent < 0.8):
-            phishing_confidence += 5
+            phishing_confidence += 10
 
         if (lettersPercent < 0.8):
             lettersInformer = lettersPercent
@@ -125,9 +128,9 @@ def main():
         elif (specialCharactersPercent > .30):
             phishing_confidence += 50
         elif (specialCharactersPercent > .20):
-            phishing_confidence += 10
+            phishing_confidence += 25
         elif (specialCharactersPercent > .15):
-            phishing_confidence += 5
+            phishing_confidence += 15
 
         if (specialCharactersPercent > .15):
             specialCharactersInformer = specialCharactersPercent
@@ -135,13 +138,13 @@ def main():
         # Adds onto phishing confidence the higher the percentage of numbers is in the URL
         numbersPercent = digitsCount / urlLength
         if (numbersPercent > .30):
-            phishing_confidence += 99
+            phishing_confidence += 50
         elif (numbersPercent > .15):
-            phishing_confidence += 20
+            phishing_confidence += 30
         elif (numbersPercent > .10):
-            phishing_confidence += 10
+            phishing_confidence += 15
         elif (numbersPercent > .05):
-            phishing_confidence += 5
+            phishing_confidence += 10
 
         if (numbersPercent > .05):
             numbersInformer = numbersPercent
@@ -234,12 +237,14 @@ def main():
         if keywordsInformer == 1:
             reasoning += "WARNING!! This URL contains keywords that are commonly used in phishing attacks, which includes: .xyz, .click, .biz, .scam \n"
         if keywordsInformer == 2:
-            reasoning += "WARNING!! This URL contains keywords that are commonly used in phishing attacks, which includes: login, secure, update, verify \n"
+            reasoning += "WARNING!! This URL contains keywords that are commonly used in phishing attacks, which includes: secure, update, verify \n"
         if keywordsInformer == 3:
             reasoning += "WARNING!! This URL contains keywords that are commonly used in phishing attacks, which includes: free, offer, click \n"
         if keywordsInformer == 4:
             reasoning += "WARNING!! This URL contains keywords that are commonly used in phishing attacks, which includes: bank, paypal, amazon \n"
-
+        if keywordsInformer == 5:
+            reasoning += "WARNING!! This URL contains a keyword that is commonly used in phishing attacks, which includes: login \n"
+        
         # if reasoning != "":
         #     suspicionLabel.config(text="These are the reasons for suspicion:", foreground="dark orange", font=(14))
 
