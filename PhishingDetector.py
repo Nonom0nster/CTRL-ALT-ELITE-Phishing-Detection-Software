@@ -39,10 +39,10 @@ def main():
         root.bind("<Return>", lambda event: phishing_detector(url.get()))
 
     
-    firstLine = ttk.Label(frm, text="Welcome to the Phishing Detector!")
+    firstLine = ttk.Label(frm, text="Welcome to the Phishing Detector!",font=(16))
     firstLine.grid(column=0, row=0, columnspan=2, pady=(0,10))
 
-    secondLine = ttk.Label(frm, text="This is Awesome!")
+    secondLine = ttk.Label(frm, text="Virginia Western Community College 2026")
     secondLine.grid(column=0, row=1, columnspan=2, pady=(0,10))
 
     thirdLine = ttk.Label(frm, text="CTRL-ALT-ELITE Edition")
@@ -202,21 +202,26 @@ def main():
         reasoning = ""
         
         if is_phishing:
-            statusLabel.config(text="WARNING!!", foreground="dark red")
+            statusLabel.config(text="WARNING!!", foreground="dark red",font=(16))
+            statusLabel.config(padding=(20,20)) #Add Padding
             #statusLabel.grid(column=0, row=0, columnspan=2, pady=5)
             resultLabel.config(text=f"{url.get()[:50]} is likely phishing with confidence: {phishing_confidence}%") #format string to show the confidence score
+            resultLabel.config(font=(14)) #Change Font Size
             #print("This URL is likely phishing with confidence:", str(phishing_confidence) + "%")
             #resultLabel.grid(column=0, row=1, columnspan=2, pady=10)        
         else:
-            statusLabel.config(text="SAFE", foreground="dark green")
+            statusLabel.config(text="SAFE", foreground="dark green",font=(16))
+            statusLabel.config(padding=(20,20)) #Add Padding
             #statusLabel.grid(column=0, row=0, columnspan=2, pady=5)
             resultLabel.config(text=f"{url.get()[:50]} is likely safe with confidence: {100 - phishing_confidence}%") #format string to show the confidence score
+            resultLabel.config(font=(14)) #Change Font Size
             #print("This URL is likely safe with confidence:", str(phishing_confidence) + "%")
             resultLabel.grid(column=0, row=1, columnspan=2, pady=10)
 
         
         if is_dangerous:
             securityLabel.config(text="WARNING!! This URL is not secure it contains http://! Be careful!", foreground="orange")
+            securityLabel.config(font=(14),padding=(20,20))
 
         if lettersInformer < 0.8:
             reasoning += f"WARNING!! This URL contains {lettersInformer*100:.2f}% letters! Be careful!\n"
@@ -234,6 +239,7 @@ def main():
             reasoning += "WARNING!! This URL contains keywords that are commonly used in phishing attacks, which includes: bank, paypal, amazon \n"
 
         reasoningLabel.config(text=reasoning, foreground="orange")
+        reasoningLabel.config(font=(14),padding=(20,20))
 
     root.mainloop()
 
