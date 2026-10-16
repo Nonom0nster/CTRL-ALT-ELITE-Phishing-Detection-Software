@@ -1,9 +1,11 @@
-########################################################
+#########################################################
 # HACKATHON 2026 - Virginia Western Community College
-# CTRL-ALT-ELITE Edition
+# CTRL-ALT-ELITE Non-AI Edition
 # VWCC CAE Phishing Detector v1.0
-# (c) Noah W, Noah T, Arkadiy, Lashman, 16 October 2026
-########################################################
+# GUI Framework Reference: Python Standard Library (tkinter) 
+# & Tcl/Tk Entry Widget Documentation (TIP 496)
+# (c) {Noah W, Noah T, Arkadiy, Lashman}, 16 October 2026
+#########################################################
 
 from tkinter import *
 from tkinter import ttk
@@ -43,7 +45,7 @@ def main():
         root.bind("<Return>", lambda event: phishing_detector(url.get()))
 
     
-    firstLine = ttk.Label(frm, text="Welcome to the Phishing Detector!",font=(16))
+    firstLine = ttk.Label(frm, text="Welcome to the Phishing Detector!",font=("", 15, "bold"))
     firstLine.grid(column=0, row=0, columnspan=2, pady=(0,10))
 
     secondLine = ttk.Label(frm, text="Virginia Western Community College 2026")
@@ -60,7 +62,7 @@ def main():
     entry.grid(column=1, row=3, pady=(0,30))
     
     
-    # Using lambda allows entry.bind to call multiple functions, I believe (it works correctly).
+    # Using lambda allows entry.bind to call multiple functions, if needed
     root.bind("<Return>", lambda event: phishing_detector(url.get()))
     quitButton = ttk.Button(frm, text="Quit", command=root.destroy)
     quitButton.grid(column=0, row=100, sticky="w")
@@ -82,8 +84,8 @@ def main():
             statusLabel.config(text="Please enter a URL to scan.", foreground="orange")
             resultLabel.config(text="")
             return
-        is_phishing = False  # Replace with actual detection logic
-        phishing_confidence = 0  # Replace with actual confidence score
+        is_phishing = False  # detection logic
+        phishing_confidence = 0  #  Initialize safely at 0 here
         # important for the information section
         specialCharactersInformer = 0
         numbersInformer = 0  
@@ -106,11 +108,11 @@ def main():
         if "login" in url:
             phishing_confidence += 15  # 15% likely a scam based on keywords
             keywordsInformer = 5
-        else:
-            phishing_confidence = 1  # 99% likely safe based on keywords
+        #else:
+        #    phishing_confidence = 1  # 99% likely safe based on keywords
 
         # Adds onto phishing confidence the lower the percentage of letters is in the URL
-        lettersPercent = lettersCount / urlLength
+        lettersPercent = lettersCount / urlLength if urlLength > 0 else 1
         if (lettersPercent < 0.3):
             phishing_confidence += 50
         elif (lettersPercent < 0.5):
@@ -124,7 +126,7 @@ def main():
             lettersInformer = lettersPercent
 
         # Adds onto phishing confidence the higher the percentage of special characters is in the URL
-        specialCharactersPercent = specialCharactersCount / urlLength
+        specialCharactersPercent = specialCharactersCount / urlLength if urlLength > 0 else 0
         if (specialCharactersPercent > .50):
             phishing_confidence += 99
         elif (specialCharactersPercent > .30):
@@ -138,7 +140,7 @@ def main():
             specialCharactersInformer = specialCharactersPercent
 
         # Adds onto phishing confidence the higher the percentage of numbers is in the URL
-        numbersPercent = digitsCount / urlLength
+        numbersPercent = digitsCount / urlLength if urlLength > 0 else 0
         if (numbersPercent > .30):
             phishing_confidence += 50
         elif (numbersPercent > .15):
@@ -192,7 +194,6 @@ def main():
 
         lettersCount = urlLength - (digitsCount + specialCharactersCount)
 
-
         return (urlLength,specialCharactersCount,digitsCount,lettersCount, is_dangerous)
 
             
@@ -205,7 +206,7 @@ def main():
         reasoning = ""
         
         if is_phishing:
-            statusLabel.config(text="WARNING!!", foreground="dark red",font=(16))
+            statusLabel.config(text="WARNING!!", foreground="dark red",font=("Arial", 16))
             statusLabel.config(padding=(20,20)) #Add Padding
             #statusLabel.grid(column=0, row=0, columnspan=2, pady=5)
             resultLabel.config(text=f"{url.get()[:50]} is likely phishing with confidence: {phishing_confidence}%") #format string to show the confidence score
@@ -213,18 +214,18 @@ def main():
             #print("This URL is likely phishing with confidence:", str(phishing_confidence) + "%")
             #resultLabel.grid(column=0, row=1, columnspan=2, pady=10)        
         else:
-            statusLabel.config(text="SAFE", foreground="dark green",font=(16))
+            statusLabel.config(text="SAFE", foreground="dark green",font=("Arial", 16))
             statusLabel.config(padding=(20,20)) #Add Padding
             #statusLabel.grid(column=0, row=0, columnspan=2, pady=5)
-            resultLabel.config(text=f"{url.get()[:50]} is likely safe with confidence: {100 - phishing_confidence}%") #format string to show the confidence score
-            resultLabel.config(font=(14)) #Change Font Size
+            resultLabel.config(text=f"{url.get()[:50]} is likely safe with confidence: {99 if phishing_confidence <= 1 else 100 - phishing_confidence}%") #format string to show the confidence score
+            resultLabel.config(font=("Arial", 14)) #Change Font Size
             #print("This URL is likely safe with confidence:", str(phishing_confidence) + "%")
             resultLabel.grid(column=0, row=1, columnspan=2, pady=10)
 
         
         if is_dangerous:
             securityLabel.config(text="WARNING!! This URL is not secure it contains http://! Be careful!", foreground="orange")
-            securityLabel.config(font=(14),padding=(20,20))
+            securityLabel.config(font=("Arial", 14),padding=(20,20))
 
         if lettersInformer < 0.8:
             reasoning += f"WARNING!! {lettersInformer*100:.2f}% of this URL is made up of letters! Use caution!\n"
@@ -247,7 +248,7 @@ def main():
         #     suspicionLabel.config(text="These are the reasons for suspicion:", foreground="dark orange", font=(14))
 
         reasoningLabel.config(text=reasoning, foreground="dark orange")
-        reasoningLabel.config(font=(14),padding=(20,20))
+        reasoningLabel.config(font=("Arial", 14),padding=(20,20))
 
     root.mainloop()
 
