@@ -35,6 +35,10 @@ def main():
     # suspicionLabel.grid(column=0, row=3, columnspan=2, pady=5)
 
     def back_to_frm():
+        statusLabel.config(text="")
+        resultLabel.config(text="")
+        securityLabel.config(text="")
+        reasoningLabel.config(text="")
         frm2.grid_forget()  # Hide the second frame
         frm.grid()  # Show the first frame
         url.set("") # Clear the URL entry field for the next input
