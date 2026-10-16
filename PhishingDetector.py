@@ -233,7 +233,7 @@ def main():
         if keywordsInformer == 4:
             reasoning += "WARNING!! This URL contains keywords that are commonly used in phishing attacks, which includes: bank, paypal, amazon \n"
 
-        statusLabel.config(text=reasoning, foreground="orange")
+        reasoningLabel.config(text=reasoning, foreground="orange")
 
     root.mainloop()
 
